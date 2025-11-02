@@ -12,13 +12,11 @@ const RATIP = () => {
   const [alarms, setAlarms] = useState([]);
   const [correlations, setCorrelations] = useState([]);
   
-  // Backend API configuration
   const API_BASE_URL = 'http://localhost:8080/api/v1';
 
-  // Check backend health on mount
   useEffect(() => {
     checkBackendHealth();
-    const healthCheckInterval = setInterval(checkBackendHealth, 30000); // Check every 30s
+    const healthCheckInterval = setInterval(checkBackendHealth, 30000);
     return () => clearInterval(healthCheckInterval);
   }, []);
 
@@ -43,7 +41,6 @@ const RATIP = () => {
     }
   };
 
-  // Simulate real-time telemetry data generation
   useEffect(() => {
     const generateTelemetryData = () => {
       const now = Date.now();
@@ -62,7 +59,6 @@ const RATIP = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Simulate alarm generation
   useEffect(() => {
     const alarmTypes = [
       { service: 'api-gateway', metric: 'High Latency', severity: 'WARNING' },
@@ -90,7 +86,6 @@ const RATIP = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Simulate correlation analysis
   useEffect(() => {
     const correlationPatterns = [
       'Lambda cold starts correlated with API latency spikes',
@@ -116,7 +111,6 @@ const RATIP = () => {
     setAiResponse('');
 
     try {
-      // Call Java Spring Boot backend API
       const response = await fetch(`${API_BASE_URL}/query`, {
         method: 'POST',
         headers: {
@@ -132,13 +126,12 @@ const RATIP = () => {
         setAiResponse(data.response);
       } else {
         const errorData = await response.json();
-        setAiResponse(`❌ Error: ${errorData.error || 'Failed to process query'}`);
+        setAiResponse(`Error: ${errorData.error || 'Failed to process query'}`);
       }
     } catch (error) {
       console.error('Query failed:', error);
       
-      // Fallback to simulated response if backend is unavailable
-      setAiResponse(`⚠️ Backend Connection Error\n\nThe Java Spring Boot backend is not available. Please ensure:\n\n1. The backend service is running on ${API_BASE_URL}\n2. CORS is properly configured\n3. The health check endpoint is accessible\n\nError: ${error.message}`);
+      setAiResponse(`Backend Connection Error\n\nThe Java Spring Boot backend is not available. Please ensure:\n\n1. The backend service is running on ${API_BASE_URL}\n2. CORS is properly configured\n3. The health check endpoint is accessible\n\nError: ${error.message}`);
     } finally {
       setIsProcessing(false);
     }
@@ -174,7 +167,6 @@ const RATIP = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-6">
-      {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
@@ -187,7 +179,6 @@ const RATIP = () => {
           {getBackendStatusBadge()}
         </div>
         
-        {/* Backend Connection Info */}
         <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700 mt-4">
           <div className="flex items-center gap-2 text-sm">
             <Server className="w-4 h-4 text-cyan-400" />
@@ -202,7 +193,6 @@ const RATIP = () => {
           </div>
         </div>
         
-        {/* Stats Bar */}
         <div className="grid grid-cols-4 gap-4 mt-6">
           <div className="bg-slate-800 rounded-lg p-4 border border-slate-700">
             <div className="flex items-center gap-2 mb-2">
@@ -235,7 +225,6 @@ const RATIP = () => {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="max-w-7xl mx-auto mb-6">
         <div className="flex gap-2 bg-slate-800 p-1 rounded-lg inline-flex">
           {['dashboard', 'ai-query', 'alarms', 'correlations'].map(tab => (
@@ -254,11 +243,9 @@ const RATIP = () => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto">
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
-            {/* Telemetry Charts */}
             <div className="grid grid-cols-2 gap-6">
               <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -345,7 +332,6 @@ const RATIP = () => {
               </div>
             </div>
 
-            {/* Example Queries */}
             <div className="mb-6">
               <p className="text-sm text-slate-400 mb-2">Try these example queries:</p>
               <div className="flex flex-wrap gap-2">
@@ -365,7 +351,6 @@ const RATIP = () => {
               </div>
             </div>
 
-            {/* AI Response */}
             {aiResponse && (
               <div className="bg-slate-900 rounded-lg p-6 border border-cyan-500/30">
                 <div className="flex items-center gap-2 mb-3">
@@ -444,11 +429,10 @@ const RATIP = () => {
         )}
       </div>
 
-      {/* Architecture Note */}
       <div className="max-w-7xl mx-auto mt-8 bg-slate-800/50 rounded-lg p-4 border border-slate-700">
         <p className="text-xs text-slate-400">
           <strong className="text-cyan-400">Frontend-Backend Integration:</strong> React UI → REST API → Spring Boot Backend ({API_BASE_URL}) | 
-          <strong className="text-cyan-400 ml-2">Stack:</strong> Java 17, Spring Boot 3.2, AWS SDK v2, Kinesis, DynamoDB, OpenAI GPT-4o-mini | 
+          <strong className="text-cyan-400 ml-2">Stack:</strong> Java 17, Spring Boot 3.2, Kinesis (mocked), DynamoDB (mocked), OpenAI GPT-4o-mini | 
           <strong className="text-cyan-400 ml-2">Features:</strong> Real-time health checks, CORS-enabled API, AI query processing
         </p>
       </div>
