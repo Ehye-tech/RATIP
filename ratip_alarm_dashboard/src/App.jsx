@@ -42,66 +42,79 @@ const RATIP = () => {
   };
 
   useEffect(() => {
-    const generateTelemetryData = () => {
-      const now = Date.now();
-      const newData = Array.from({ length: 20 }, (_, i) => ({
-        time: new Date(now - (19 - i) * 60000).toLocaleTimeString(),
-        apiLatency: Math.random() * 100 + 50,
-        lambdaDuration: Math.random() * 500 + 200,
-        dynamoRead: Math.random() * 1000 + 500,
-        errors: Math.floor(Math.random() * 10)
-      }));
-      setTelemetryData(newData);
+    const fetchTelemetryData = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/telemetry`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setTelemetryData(data);
+        } else {
+          console.error('Failed to fetch telemetry data');
+        }
+      } catch (error) {
+        console.error('Error fetching telemetry data:', error);
+      }
     };
 
-    generateTelemetryData();
-    const interval = setInterval(generateTelemetryData, 5000);
+    fetchTelemetryData();
+    const interval = setInterval(fetchTelemetryData, 5000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    const alarmTypes = [
-      { service: 'api-gateway', metric: 'High Latency', severity: 'WARNING' },
-      { service: 'lambda-processor', metric: 'Error Rate Spike', severity: 'CRITICAL' },
-      { service: 'dynamodb-table', metric: 'Throttling', severity: 'WARNING' },
-      { service: 'ecs-service', metric: 'CPU Threshold', severity: 'INFO' },
-      { service: 'kinesis-stream', metric: 'Shard Saturation', severity: 'CRITICAL' }
-    ];
-
-    const generateAlarms = () => {
-      const newAlarms = Array.from({ length: 5 }, (_, i) => {
-        const alarm = alarmTypes[Math.floor(Math.random() * alarmTypes.length)];
-        return {
-          id: `alarm-${Date.now()}-${i}`,
-          ...alarm,
-          timestamp: new Date(Date.now() - Math.random() * 3600000).toISOString(),
-          value: Math.random() * 100
-        };
-      }).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      setAlarms(newAlarms);
+    const fetchAlarms = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/alarms`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setAlarms(data);
+        } else {
+          console.error('Failed to fetch alarms');
+        }
+      } catch (error) {
+        console.error('Error fetching alarms:', error);
+      }
     };
 
-    generateAlarms();
-    const interval = setInterval(generateAlarms, 10000);
+    fetchAlarms();
+    const interval = setInterval(fetchAlarms, 10000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    const correlationPatterns = [
-      'Lambda cold starts correlated with API latency spikes',
-      'DynamoDB throttling events preceding error rate increase',
-      'ECS memory pressure during peak traffic hours',
-      'Kinesis lag causing downstream Lambda timeouts'
-    ];
+    const fetchCorrelations = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/correlations`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setCorrelations(data);
+        } else {
+          console.error('Failed to fetch correlations');
+        }
+      } catch (error) {
+        console.error('Error fetching correlations:', error);
+      }
+    };
 
-    const newCorrelations = correlationPatterns.map((pattern, i) => ({
-      id: i,
-      pattern,
-      confidence: (Math.random() * 30 + 70).toFixed(1),
-      occurrences: Math.floor(Math.random() * 20 + 5),
-      lastSeen: new Date(Date.now() - Math.random() * 7200000).toLocaleString()
-    }));
-    setCorrelations(newCorrelations);
+    fetchCorrelations();
   }, []);
 
   const handleAIQuery = async () => {
