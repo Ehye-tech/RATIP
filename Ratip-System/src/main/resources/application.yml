@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: ratip-backend
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8080
+
+ratip:
+  openai:
+    api-key: ${OPENAI_API_KEY:your-api-key-here}
+    model: gpt-4o-mini
+  mock-data:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.ratip: DEBUG
